@@ -1,5 +1,6 @@
 import re
 from jinja2 import loaders
+from django.utils.module_loading import import_by_path
 
 match_loader = re.compile(r'^(django|coffin)\.')
 
@@ -13,6 +14,7 @@ def jinja_loader_from_django_loader(django_loader, args=None):
         could not be found.
     """
     if not match_loader.match(django_loader):
+        return import_by_path(django_loader)(*(args or []))
         return None
     for substr, func in _JINJA_LOADER_BY_DJANGO_SUBSTR.iteritems():
         if substr in django_loader:
